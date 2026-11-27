@@ -1,0 +1,82 @@
+   <%@ page import="java.sql.*" %>
+<%@ page import="java.util.*" %>
+<%!
+    // ==========================================================
+    // Centralized Database Configuration for LuvZon
+    // Change your MySQL credentials here if different
+    // ==========================================================
+    private static final String DB_HOST = "localhost";
+    private static final String DB_PORT = "3306";
+    private static final String DB_NAME = "luvzon_db";
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "root"; // MySQL password for example root
+    
+    // Connection URL with timezone and SSL options
+    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME 
+            + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8";
+
+    // Obtain a new SQL connection
+    public static Connection getDBConnection() throws SQLException, ClassNotFoundException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            // Fallback for older MySQL connectors
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+    }
+
+    // Helper to safely close JDBC resources
+    public static void closeQuietly(AutoCloseable res) {
+        if (res != null) {
+            try {
+                res.close();
+            } catch (Exception ignored) {}
+        }
+    }
+
+    // Helper for category icon representation
+    public static String getCategoryIcon(String category) {
+        if (category == null) return "bi-box";
+        switch (category.toLowerCase().trim()) {
+            case "electronics": return "bi-laptop";
+            case "medecine": return "bi-capsule";
+            case "toys": return "bi-controller";
+            case "clothes": return "bi-tag";
+            case "jwells": return "bi-gem";
+            case "books": return "bi-book";
+            default: return "bi-bag";
+        }
+    }
+
+    // Helper for category display name
+    public static String getCategoryDisplayName(String category) {
+        if (category == null) return "Unknown";
+        switch (category.toLowerCase().trim()) {
+            case "electronics": return "Electronics";
+            case "medecine": return "Medicine & Health";
+            case "toys": return "Toys & Games";
+            case "clothes": return "Clothing & Fashion";
+            case "jwells": return "Jewelry & Accessories";
+            case "books": return "Books & Literature";
+            default: return category.substring(0, 1).toUpperCase() + category.substring(1);
+        }
+    }
+
+    // Fallback placeholder image if none provided
+    public static String getProductImage(String category, String imageUrl) {
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            return imageUrl.trim();
+        }
+        if (category == null) category = "electronics";
+        switch (category.toLowerCase().trim()) {
+            case "electronics": return "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80";
+            case "medecine": return "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80";
+            case "toys": return "https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=500&q=80";
+            case "clothes": return "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80";
+            case "jwells": return "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80";
+            case "books": return "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80";
+            default: return "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&q=80";
+        }
+    }
+%>
